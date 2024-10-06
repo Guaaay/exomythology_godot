@@ -1,0 +1,97 @@
+[gd_scene load_steps=15 format=3 uid="uid://b4su734mdil0c"]
+
+[ext_resource type="Script" path="res://character_body_3d.gd" id="1_jmrru"]
+[ext_resource type="Script" path="res://global.gd" id="1_smvsb"]
+[ext_resource type="Texture2D" uid="uid://dyauawbjschfj" path="res://crosshair.png" id="2_gd7h3"]
+[ext_resource type="Script" path="res://terrain_generation.gd" id="2_rmktn"]
+[ext_resource type="Script" path="res://star_renderer.gd" id="3_imo7x"]
+[ext_resource type="PackedScene" uid="uid://r6ahanhorre2" path="res://const_line.tscn" id="5_oiuxr"]
+[ext_resource type="Script" path="res://const_lines.gd" id="6_bolci"]
+[ext_resource type="Script" path="res://request_stars.gd" id="6_vck1v"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_uh84n"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_e34gn"]
+sky_top_color = Color(0.0475618, 0.0233578, 0.0637438, 1)
+sky_horizon_color = Color(0.190855, 0.144751, 0.188358, 1)
+ground_bottom_color = Color(0.192157, 0.145098, 0.188235, 1)
+ground_horizon_color = Color(0.192157, 0.145098, 0.188235, 1)
+ground_curve = 257.092
+sun_angle_max = 0.0
+
+[sub_resource type="Sky" id="Sky_20woe"]
+sky_material = SubResource("ProceduralSkyMaterial_e34gn")
+
+[sub_resource type="Environment" id="Environment_ntl8k"]
+background_mode = 2
+sky = SubResource("Sky_20woe")
+glow_enabled = true
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_rkfgg"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_bu2k2"]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_smvsb")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+script = ExtResource("1_jmrru")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -178, 0)
+shape = SubResource("CapsuleShape3D_uh84n")
+
+[node name="Neck" type="Node3D" parent="CharacterBody3D"]
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D/Neck"]
+
+[node name="RayCast3D" type="RayCast3D" parent="CharacterBody3D/Neck/Camera3D"]
+unique_name_in_owner = true
+target_position = Vector3(0, 0, -210)
+debug_shape_custom_color = Color(0.929412, 0, 0, 1)
+debug_shape_thickness = 5
+
+[node name="Control" type="Control" parent="CharacterBody3D/Neck/Camera3D"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Crosshair" type="Sprite2D" parent="CharacterBody3D/Neck/Camera3D/Control"]
+unique_name_in_owner = true
+position = Vector2(552, 337)
+scale = Vector2(0.02, 0.02)
+texture = ExtResource("2_gd7h3")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ntl8k")
+camera_attributes = SubResource("CameraAttributesPractical_rkfgg")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.995872, -0.0452321, 0.0786991, 0.0907717, -0.495704, 0.863735, -5.70381e-05, 0.867313, 0.497764, -9.34572, 68.5988, 31.1755)
+light_color = Color(0.626546, 0.708861, 0.94442, 1)
+light_volumetric_fog_energy = 1.415
+
+[node name="TerrainGeneration" type="Node" parent="."]
+script = ExtResource("2_rmktn")
+noise = SubResource("FastNoiseLite_bu2k2")
+
+[node name="StarRenderer" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_imo7x")
+
+[node name="RequestStars" type="HTTPRequest" parent="StarRenderer"]
+max_redirects = 11
+script = ExtResource("6_vck1v")
+
+[node name="ConstLines" type="Node3D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6_bolci")
+
+[node name="StaticBody3D" parent="ConstLines" instance=ExtResource("5_oiuxr")]
+transform = Transform3D(1000, 0, 0, 0, 3042.64, -65.3234, 0, 26896.9, 7.38954, 1.39, 10000, -35.111)
+
+[node name="RequestConst" type="HTTPRequest" parent="ConstLines"]
+
+[node name="PostConst" type="HTTPRequest" parent="ConstLines"]

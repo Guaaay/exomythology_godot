@@ -1,0 +1,21 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://dj1mktthebun6"]
+
+[ext_resource type="Shader" path="res://new_shader_material.gdshader" id="1_e4fv3"]
+
+[sub_resource type="Gradient" id="Gradient_2d4qn"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_73m55"]
+color_ramp = SubResource("Gradient_2d4qn")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ttx62"]
+albedo_color = Color(0.121918, 0.354578, 0.547667, 1)
+ao_enabled = true
+ao_light_affect = 0.22
+heightmap_scale = 4.492
+heightmap_texture = SubResource("NoiseTexture2D_73m55")
+
+[resource]
+render_priority = 0
+next_pass = SubResource("StandardMaterial3D_ttx62")
+shader = ExtResource("1_e4fv3")
+shader_parameter/albedo = Vector4(1, 1, 1, 1)
